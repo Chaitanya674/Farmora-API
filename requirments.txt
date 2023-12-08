@@ -1,0 +1,6 @@
+tensorflow 
+numpy
+Pillow
+gunicorn==20.0.4
+flask_cors
+flask
