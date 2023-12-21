@@ -10,9 +10,11 @@ app.config["UPLOAD_FOLDER1"] = "./static"
 CORS(app)
 
 
-@app.route('/predict', methods=['POST', 'GET'])
+@app.route('/predict', methods=['POST'])
 def predict():
     img = request.files['file']
+    if not os.path.isdir("./static"):
+        os.mkdir("static")
     img.save(os.path.join('./static/' + img.filename))
     interpreter = tf.lite.Interpreter(model_path="model.tflite")
     interpreter.allocate_tensors()
@@ -26,7 +28,7 @@ def predict():
     interpreter.invoke()
     output = interpreter.get_tensor(output_details[0]['index'])
     predicted_class = np.argmax(output)
-    print(predicted_class)
+    os.remove(os.path.join("./static/" + img.filename))
     return jsonify({'class': int(predicted_class)})
 
 if __name__ == '__main__':
